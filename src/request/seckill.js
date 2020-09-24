@@ -27,7 +27,7 @@ export function editSeckill(data) {
 }
 /**
  * 删除规格
- * @param {*} uid  删除的id
+ * @param {*} id  删除的id
  */
 export function delSeckill(id) {
     return $axios.post("/seckdelete", { id })

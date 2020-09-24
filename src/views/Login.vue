@@ -17,7 +17,7 @@
                   </template>
               </el-input>
             </el-form-item>
-            <el-form-item>
+            <el-form-item >
               <el-button class="login-btn" type="primary" @click="submit">立即登录</el-button>
             </el-form-item>
           </el-form>

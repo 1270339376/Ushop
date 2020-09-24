@@ -10,6 +10,7 @@ import specs from './modules/specs'
 import goods from "./modules/goods"
 import banner from "./modules/banner"
 import seckill from "./modules/seckill"
+import member from "./modules/member"
 let store =new Vuex.Store({
     state:{
         iscollapse:false  // 是否折叠，默认不折叠！
@@ -20,7 +21,7 @@ let store =new Vuex.Store({
         }
     },
     modules:{
-        menu,role,user,category,specs,goods,banner,seckill
+        menu,role,user,category,specs,goods,banner,seckill,member
     }
 })
 export default store;

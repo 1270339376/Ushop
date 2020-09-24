@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="info.isAdd ? '添加秒杀':'修改秒杀'"
+    :title="info.isAdd ? '添加秒杀' : '修改秒杀'"
     @close="cancel"
     :visible.sync="info.isShow"
     width="68%"
@@ -12,9 +12,22 @@
           <el-form-item label="活动名称" prop="title">
             <el-input v-model="forminfo.title"></el-input>
           </el-form-item>
-          <el-form-item label="活动时间"></el-form-item>
+          <el-form-item label="活动时间">
+            <el-date-picker
+              v-model="value1"
+              type="datetimerange"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :default-time="['12:00:00']"
+              picker-options
+            ></el-date-picker>
+          </el-form-item>
           <el-form-item label="一级分类">
-            <el-select v-model="forminfo.first_cateid" @change="topChange" placeholder="请选择">
+            <el-select
+              v-model="forminfo.first_cateid"
+              @change="topChange"
+              placeholder="请选择"
+            >
               <el-option
                 v-for="item in catelist"
                 :key="item.id"
@@ -24,7 +37,11 @@
             </el-select>
           </el-form-item>
           <el-form-item label="二级分类">
-            <el-select v-model="forminfo.second_cateid" @change="secondChange" placeholder="请选择">
+            <el-select
+              v-model="forminfo.second_cateid"
+              @change="secondChange"
+              placeholder="请选择"
+            >
               <el-option
                 v-for="item in secondlist"
                 :key="item.id"
@@ -35,18 +52,22 @@
           </el-form-item>
 
           <el-form-item label="选择商品">
-            <el-select v-model="forminfo.goodsname" placeholder="请选择">
+            <el-select v-model="forminfo.goodsid" placeholder="请选择">
               <el-option
-                v-for="item in goodsidlist"
+                v-for="item in thirdlist"
                 :key="item.id"
-                :label="item.catename"
+                :label="item.goodsname"
                 :value="item.id"
               ></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item label="状态">
-            <el-switch v-model="forminfo.status" :active-value="1" :inactive-value="2"></el-switch>
+            <el-switch
+              v-model="forminfo.status"
+              :active-value="1"
+              :inactive-value="2"
+            ></el-switch>
           </el-form-item>
         </el-col>
       </el-row>
@@ -78,6 +99,8 @@ let defaultItem = {
   goodsid: "",
   status: 1, // 状态1正常2禁用
 };
+// let time = new Date();
+
 let resetItem = { ...defaultItem };
 export default {
   props: {
@@ -91,6 +114,7 @@ export default {
       },
     },
   },
+
   data() {
     return {
       //   dialogVisible: false,
@@ -102,10 +126,12 @@ export default {
       filelist: [], // [{name:'',url:''}]
       activeName: "first",
       secondlist: [], // 二级分类
-      //   attrslist: [], // 规格值列表
-      goodsidlist: [], //商品列表
+      // goodsidlist: [], //商品列表
+      thirdlist: [],
+      value1: [],
     };
   },
+
   computed: {
     ...mapGetters({
       catelist: "category/catelist",
@@ -121,9 +147,9 @@ export default {
     if (!this.secklist.length) {
       this.get_seckill_list();
     }
-    // if (!this.specslist.length) {
-    //   this.get_specs_list();
-    // }
+    if (!this.goodslist.length) {
+      this.get_goods_list();
+    }
   },
   methods: {
     ...mapActions({
@@ -143,6 +169,7 @@ export default {
       // 一级分类变化
       this.secondlist = [];
       this.forminfo.second_cateid = "";
+
       // id就是选中的ID，根据这个ID遍历一级分类数组，找出其对应的chilren就是二级分类列表！
       this.catelist.forEach((val) => {
         if (val.id == id) {
@@ -152,75 +179,59 @@ export default {
       });
     },
     secondChange(id) {
-      let obj={};
-      this.goodsidlist = [];
+      this.thirdlist = [];
+
       this.forminfo.goodsid = "";
       this.goodslist.forEach((val) => {
-      
+        // console.log(val)
         if (val.second_cateid == id) {
-          obj.goodsid=val.id;
-          obj.goodsname=val.goodsname;
-          this.goodsidlist.push(obj);
-          // console.log("AAA")
-            console.log("AAS")
-          this.forminfo.goodsname=this.goodsidlist[0].goodsname
+          this.thirdlist.push(val);
         }
-        console.log("AASSS")
       });
     },
-    // specsChange(id) {
-    //   // 规格名发生变化
-    //   this.attrslist = [];
-    //   this.forminfo.specsattr = [];
-    //   this.specslist.forEach((val) => {
-    //     if (val.id == id) {
-    //       this.attrslist = val.attrs;
-    //     }
-    //   });
-    // },
+
     setinfo(val) {
       // 将数据赋给默认defaultItem; 赋给表单
-      if (val.img) {
-        this.filelist = [
-          {
-            name: val.catename,
-            url: this.$host + val.img,
-          },
-        ];
-      }
+      // if (val.img) {
+      //   this.filelist = [
+      //     {
+      //       name: val.catename,
+      //       url: this.$host + val.img,
+      //     },
+      //   ];
+      // }
+      // console.log(new Date(1601092800000))
       val.children ? delete val.children : "";
       this.topChange(val.first_cateid);
       this.secondChange(val.second_cateid);
+      this.value1.push(new Date(parseInt(val.begintime)));
+      this.value1.push(new Date(parseInt(val.endtime)));
+      console.log(this.value1);
       //   this.specsChange(val.specsid);
       "firstcatename" in val ? delete val.firstcatename : "";
       "secondcatename" in val ? delete val.secondcatename : "";
-      // 手动设置编辑器的内容
-    //   this.$nextTick(() => {
-    //     this.$refs.wangeditor.setHtml(val.description);
-    //   });
+
       defaultItem = { ...val };
       this.forminfo = { ...val };
     },
     async sumbit() {
-      // 文章正文！
-    //   this.forminfo.description = this.$refs.wangeditor.getHtml();
-    //   console.log(this.forminfo);
       // 表单验证！
+      this.forminfo.begintime = this.value1[0].getTime();
+      this.forminfo.endtime = this.value1[1].getTime();
+      console.log(this.value1);
       this.$refs.form.validate(async (valid) => {
         console.log(this.forminfo);
+
         if (valid) {
           // 如果验证通过！
           let res;
-          // 提交FormData类型！
-          let fd = new FormData();
-          for (let k in this.forminfo) {
-            fd.append(k, this.forminfo[k]);
-          }
+
           if (this.info.isAdd) {
             // 添加还是修改！
-            res = await addSeckill(fd);
+
+            res = await addSeckill(this.forminfo);
           } else {
-            res = await editSeckill(fd);
+            res = await editSeckill(this.forminfo);
           }
           if (res.code == 200) {
             this.$message.success(res.msg);
@@ -245,7 +256,7 @@ export default {
     cancel() {
       //  // 无论是修改成功还是添加成功，都应该让表单为空！或者弹框关闭的时候！
       this.forminfo = { ...resetItem };
-      this.filelist = []; // 设为空，就没有了！
+      this.value1 = []; // 设为空，就没有了！
       // this.$refs.wangeditor.setHtml("");
     },
   },

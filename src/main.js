@@ -22,6 +22,7 @@ for(let k in filterObj){
 Vue.prototype.$host = "http://localhost:3030"
 
 
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

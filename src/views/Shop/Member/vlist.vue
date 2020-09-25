@@ -1,27 +1,25 @@
 <template>
   <div class="table-bg">
     <el-table
-      :data="memberlist"
-      row-key="id"
-      :tree-props="{ children: 'children' }"
+      :data="list"
     >
       <el-table-column
-        v-model="forminfo.uid"
+        prop="uid"
         label="用户ID"
         align="center"
       ></el-table-column>
       <el-table-column
-        v-model="forminfo.nickname"
+       prop="nickname"
         label="昵称"
         align="center"
       ></el-table-column>
       <el-table-column
-       v-model="forminfo.phone"
+        prop="phone"
         label="手机号"
         align="center"
       ></el-table-column>
       <el-table-column
-        
+        prop="addtime"
         label="注册日期"
         align="center"
       ></el-table-column>
@@ -42,42 +40,38 @@
 </template>
 <script>
 
-import { mapGetters, mapActions } from "vuex";
-import { editMember } from "@/request/member";
+// import { mapGetters, mapActions } from "vuex";
+import {getMember } from "@/request/member";
 
-let defaultItem = {
-  uid: 0,
-  nickname: "",
-  phone: "",
-  password: "",
-  status: 1, // 状态1正常2禁用
-};
-let resetItem = { ...defaultItem };
+
+
 export default {
   data() {
     return {
-      forminfo: { ...defaultItem },
-      filelist: [],
+
+      list:[]
     };
   },
-  computed: {
-    ...mapGetters({
-      memberlist: "member/memberlist",
-    }),
-  },
+  // computed: {
+  //   ...mapGetters({
+  //     memberlist: "member/memberlist",
+  //   }),
+  // },
   mounted() {
-    if (!this.memberlist.length) {
-      this.get_member_list();
-    }
+    // 
+    this.get_list();
   },
   methods: {
-    ...mapActions({
-      get_member_list: "member/get_member_list",
-    }),
+    // ...mapActions({
+    //   get_member_list: "member/get_member_list",
+    // }),
     edit(val) {
       this.$emit("edit", { ...val });
     },
-
+    async get_list(){
+      let res=await getMember();
+       this.list = res;
+    },
     setinfo(val) {
      val.children ? delete val.children : "";
       defaultItem = { ...val };

@@ -2,18 +2,18 @@
   <div>
     <!-- <el-button type="primary" @click="add">添加轮播</el-button> -->
     <!-- 列表组件 -->
-    <v-list @edit="edit"></v-list>
+    <v-list @edit="edit" ref="list"></v-list>
     <!-- 添加/修改组件 -->
-    <!-- <v-info :info="info" ref="dialog"></v-info> -->
+    <v-info :info="info" ref="dialog" @update="update"></v-info>
   </div>
 </template>
 
 <script>
 import VList from './vlist'
-// import VInfo from './vinfo'
+import VInfo from './vinfo'
 export default {
   components: {
-    VList
+    VList,VInfo
   },
   props: {},
   data() {
@@ -33,6 +33,9 @@ export default {
       // 调用弹框组件的setinfo方法！
       this.$refs.dialog.setinfo(val);
     },
+    update(){
+      this.$refs.list.get_list();  //调用组件的获取数据列表的方法 
+    }
   },
 };
 </script>
